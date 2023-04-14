@@ -50,6 +50,21 @@ app.patch('/api/v1/posts/:id', function (request, response) {
 
 // Delete existing post
 
+
+// Fetching a single post from the db, sending to client app
+app.get('/api/v1/posts/:id', function (req, res) {
+    // console.log(req.params)
+    // Grab id from req.params.id, query db if this post (id) exist, return to the client app (web client)
+    const sqlQuery = `SELECT * FROM posts WHERE id=${ req.params.id } LIMIT 1`
+
+    // console.log(sqlQuery)
+    dbConnection.query(sqlQuery, (err, row) => {
+        if (err) throw err
+
+        return res.status(200).json(row)
+    })
+})
+
 app.get('/api/v1/posts', function (req, res) {
     var sql2 = "SElECT * FROM posts"
     return dbConnection.query(sql2, function (err, result) {
