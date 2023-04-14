@@ -49,7 +49,10 @@ app.patch('/api/v1/posts/:id', function (request, response) {
 })
 
 // Delete existing post
+app.delete('/api/v1/posts/:id', (req, res) => {
+    // grab id from req object, check if post with id exists, if yes, delete and return response to client
 
+})
 
 // Fetching a single post from the db, sending to client app
 app.get('/api/v1/posts/:id', function (req, res) {
@@ -61,7 +64,11 @@ app.get('/api/v1/posts/:id', function (req, res) {
     dbConnection.query(sqlQuery, (err, row) => {
         if (err) throw err
 
-        return res.status(200).json(row)
+        return res.status(200).json({
+            status: true,
+            statusCode: 200,
+            data: row
+        })
     })
 })
 
@@ -70,7 +77,11 @@ app.get('/api/v1/posts', function (req, res) {
     return dbConnection.query(sql2, function (err, result) {
         if (err) throw err;
 
-        return res.json(result)
+        return res.status(200).json({
+            status: true,
+            statusCode: 200,
+            data: result
+        })
     })
 })
 
@@ -85,7 +96,12 @@ app.post('/api/v1/posts', function (req, res) {
     // Query the MySQL database and return result to the client app ie. POSTMAN or Web APP
     return dbConnection.query(sql, function (err, result) {
         if (err) throw err; // if error throw it, else continue execution to next line
-        return res.json(result)
+        
+        return res.status(200).json({
+            status: true,
+            statusCode: 200,
+            data: result
+        })
         // console.log("1 record inserted");
     });
     // res.json(sql)
