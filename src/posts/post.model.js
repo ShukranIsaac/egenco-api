@@ -13,4 +13,9 @@ class Post {
     }
 }
 
+// Refactor the code base
+// middlewares, routers/endpoints, 
+// models, ORM - Object Relational Mapping {typeorm}
+// Annotations {@Entity, @Id, @Column, @Primary}
+
 module.exports = { Post }
