@@ -1,29 +1,30 @@
-const express = require('express')
-const router = express.Router()
+import * as express from 'express'
+import { Post } from './post.model'
 
-const { AppDataSource } = require('../utils/mysql.connector')
-const { Post } = require('./post.model')
+const router = express.Router()
+import { AppDataSource }from '../utils/mysql.connector'
+import { FindManyOptions, FindOneOptions, FindOperator } from 'typeorm'
 
 const repository = AppDataSource.getRepository(Post)
 
-router.get('/api/v1/posts', function (req, res) {
+router.get('/api/v1/posts', async function (req, res) {
     // var sql2 = "SElECT * FROM posts"
     // Promise
-    return repository.find(Post)
-        .then(result => {
-            return res.status(200).json({
-                status: true,
-                statusCode: 200,
-                data: result
-            })
+    try {
+        const result = await repository.find(Post as FindManyOptions<Post>)
+        return res.status(200).json({
+            status: true,
+            statusCode: 200,
+            data: result
         })
-        .catch(err => {
-            if (err) throw err
-        })
+    } catch (err) {
+        if (err)
+            throw err
+    }
 })
 
 // Create new post/article in the database
-router.post('/api/v1/posts', function (req, res) {
+router.post('/api/v1/posts', async function (req, res) {
     // console.log(req.body)
     const { name, imageUrl, summary } = req.body // destructure sent properties from the REQUEST body
 
@@ -37,18 +38,18 @@ router.post('/api/v1/posts', function (req, res) {
     post.imageUrl = imageUrl
     post.summary = summary
 
-    return repository.save(post)
-        .then(result => {
-            return res.status(200).json({
-                status: true,
-                statusCode: 200,
-                data: result
-            })
+    try {
+        const result = await repository.save(post)
+        return res.status(200).json({
+            status: true,
+            statusCode: 200,
+            data: result
         })
-        .catch(err => {
-            // if error throw it, else continue execution to next line
-            if (err) throw err;
-        })
+    } catch (err) {
+        // if error throw it, else continue execution to next line
+        if (err)
+            throw err
+    }
 
     // return dbConnection.query(sql, function (err, result) {
     //     if (err) throw err; // if error throw it, else continue execution to next line
@@ -68,9 +69,9 @@ router.patch('/api/v1/posts/:id', async function (request, response) {
     // console.log(request.params)
     // get id from request, use id to select a post from db, update post and end request
 
-    const rowToUpdate = repository.findOne({
+    const rowToUpdate = await repository.findOne({
         id: request.params.id
-    })
+    } as FindOneOptions<Post>)
 
     // Object.entries(rowToUpdate)
 
@@ -114,7 +115,7 @@ router.patch('/api/v1/posts/:id', async function (request, response) {
 router.delete('/api/v1/posts/:id', async (req, res) => {
     // grab id from req object, check if post with id exists, if yes, delete and return response to client
     const rowTodelete = await repository.findOneBy({
-        id: req.params.id
+        id: Number(req.params.id)
     })
 
     return await repository.remove(rowTodelete)
@@ -150,7 +151,7 @@ router.get('/api/v1/posts/:id', async function (req, res) {
 
     try {
         const row = await repository.findOneBy({
-            id: req.params.id
+            id: Number(req.params.id)
         })
 
         return res.status(200).json({
@@ -164,4 +165,4 @@ router.get('/api/v1/posts/:id', async function (req, res) {
     }
 })
 
-module.exports = router
+export default router
