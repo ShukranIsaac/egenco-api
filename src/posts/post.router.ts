@@ -1,10 +1,9 @@
 import * as express from 'express'
 import { Post } from './post.model'
+import { AppDataSource }from '../utils/mysql.connector'
+import { FindManyOptions, FindOneOptions } from 'typeorm'
 
 const router = express.Router()
-import { AppDataSource }from '../utils/mysql.connector'
-import { FindManyOptions, FindOneOptions, FindOperator } from 'typeorm'
-
 const repository = AppDataSource.getRepository(Post)
 
 router.get('/api/v1/posts', async function (req, res) {
